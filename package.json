@@ -1,0 +1,26 @@
+{
+  "name": "youtube-clonecoding",
+  "version": "1.0.0",
+  "description": "니꼬와 함께하는 유튜브클론코딩 공부",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "win": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eunjeong-97/youtube-clonecoding.git"
+  },
+  "keywords": [
+    "nodeJS"
+  ],
+  "author": "eunjeong<beanlove97@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eunjeong-97/youtube-clonecoding/issues"
+  },
+  "homepage": "https://github.com/eunjeong-97/youtube-clonecoding#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
