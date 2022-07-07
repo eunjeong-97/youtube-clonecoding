@@ -10,6 +10,7 @@ const logger = (req, res, next) => {
 const privateMiddleware = (req, res, next) => {
     const url = req.url;
     if (url === '/protected') {
+        // 이 함수가 브라우저에게 'hello'라고 response한다
         return res.send('<h1>Not Allowed</h1>');
     }
     console.log('Allow, you may pass.')
@@ -18,6 +19,7 @@ const privateMiddleware = (req, res, next) => {
 
 const handleHome = (req, res) => {
     console.log(`I'm finalware`)
+    console.log(req.path);
     return res.send('<h1>I still love you.</h1>');
 };
 
@@ -25,27 +27,24 @@ const handleProtected = (req, res) => {
     return res.send('Welcome to the private lounge.')
 }
 
+const afterHome = (req, res, next) => {
+    console.log('afterHome');
+    next();
+}
+
+// global middleware
 app.use(logger);
 app.use(privateMiddleware);
-app.get('/', handleHome);
+// app.use(logger, privateMiddleware); 두줄로 입력한것과 동일하다
+app.get('/', handleHome); // 만약 /가 아니라면 아래줄로 이동
+app.use(afterHome); // afterHome middleware가  protected에만 적용되고 /에는 적용되지 않는다
 app.get('/protected', handleProtected);
+// 다른경로로 가면 페이지를 찾을수없기 때문에 연결이 종료된다
 const handleListening = () => console.log(`Server Listening on http:localhost:${PORT}`);
 app.listen(PORT, handleListening);
 
 /*
-브라우저가 request를 보내면 서버는 브라우저에게 response를 전달해줘야 한다
-이렇게 response를 해주기 위해 controller를 활용하면 되는데, controller에는 request, response, next argument가 있다
-request object에는 cookies, 브라우저정보, IP주소 등의 request와 같은 정보가 있다
-express API를 살펴보면 request에서 얻을 수 정보나 response할 메서드의 종류를 확인할 수 있다
-return res.end(); 서버와의 연결종료
-return res.send('Hello'); 브라우저에게 메시지 전달(종류는 상관없음)
-
-이러한 모든것들이 route를 만들고, 그 route를 다루는것에 기초하고있다
-routes를 만들고 controller를 만든다
-controller에서는 DB와 소통하고 비밀번호를 확인하고 동영상을 전송하는 등등의 작업을 하면 된다
-
-controller자리에 함수를 넣어주지 않으면 Error를 받는다
-console.log('Hello')는 바로 실행해버리기 때문에 함수가 아니라 statement이다
-
-controller는 인라인으로 작성하는것보단 함수를 따로 만들어서 사용하는게 더 좋다
+middleware는 request와 response 중간에 있는 software이다
+모든 controller는 middleware이다
+next()함수를 호출하면 express가 브라우저에게 응답할때까지 다음 함수(controller)를 호출한다 
 */
