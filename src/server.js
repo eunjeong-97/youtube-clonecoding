@@ -10,8 +10,6 @@ const app = express();
 const logger = morgan('dev');
 app.use(logger);
 
-// 모듈화된 router를 import해와야 한다
-// 파일 전체말고 변수화된 router만 import하고 싶다
 app.use('/', globalRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
@@ -20,15 +18,24 @@ const handleListening = () => console.log(`Server Listening on http:localhost:${
 app.listen(PORT, handleListening);
 
 /*
-clean code
-머릿속에 잇는 코드를 작성하느라 처음에는 정리되지 않은 상태로 지저분하게 코드를 작성한다
-얼마나 지저분하던지 상관안하고 일단 코드를 작성하고, 코드를 작성한 시간만큼 코드를 정리하는 시간을 들여야 한다
+만약 /users/edit URL을 감지하면 express는 우선
+URL포탈같이 /users로 시작하는 userRouter로 진입해서 userRouter에서 /edit의 path를 찾는다
 
-1. 컨트롤러와 라우터로 나눈다
-자바스크립트에서는 모든 파일이 자기만의 세계를 가지기 때문에 여러 파일에서 동일한 express를 import해도 상관이 없다
-import express from 'express';
+컨트롤러에서 많은 작업이 진행될것이기 때문에 라우터와 컨트롤러를 병행해서 사용하면 좋지 않다
+컨트롤러는 함수이고, 라우터는 그러한 함수를 사용하는 입장이다
 
-각각의 자바스크립트파일에서 만드는 것은 모듈이기 때문에 한 파일안에서도 돌아가는 환경을 만들어야 한다
+videoController, userController 파일을 만들었지만 globalController를 만들 필요는 없다
+Home에서는 동영상들을 보여줄 것이고, Join은 유저가 하는것이라 글로벌라우터가 실질적으로 하는 일은 없는 거다
+즉, 글로벌라우터는 URL을 깔끔하게 하기 위해 사용하는거지 기능을 구분하지는 않는다
 
-2. 라우터에서 URL에 따른 controller관리하는 코드: router.get('/path', controller);
+export default 를 사용해서 하나만 export하던지
+export const functionName = () => {} 처럼사용해서 여러개를 export할 수 있는데
+
+export default를 사용하면 다른파일에서 import할 때 내가 원하는 어떤 이름으로 import할 수 있다
+즉, 하나의 파일은 하나의 export default만을 가질 수 있기 때문에 node.js가 default export를 가지고 이름을 바꿔준다는 말이다
+
+
+한편 그냥 export를 한경우 {}로 구조분해할당처럼 import해야 한다
+이때 다른이름으로 import를 하면 object undefined에러를 보게 되는데, 라우터는 함수가 필요하지만 정의되지 않은것을 받았다는 말이고, 즉 라우터에게 존재하지 않은 함수를 지정해줫다는 뜻이다
+
 */
